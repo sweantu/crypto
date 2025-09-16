@@ -1,0 +1,44 @@
+# Python-specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+.env
+*.env
+
+# Development tools
+.vscode/
+.idea/
+*.log
+.pytest_cache/
+.coverage
+coverage.xml
+*.egg-info/
+dist/
+build/
+
+# Docker-specific
+Dockerfile
+docker-compose.yml
+docker-compose.yaml
+
+# Git
+.git/
+.gitignore
+
+# Local and temporary files
+*.swp
+*.bak
+*.tmp
+*~
+
+# Project-specific
+app/__pycache__/
+app/*.log
+app/.env
+
+# MongoDB data
+data/
+mongodb_data/
