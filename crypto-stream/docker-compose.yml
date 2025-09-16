@@ -19,7 +19,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - crypto_batch_postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
 
   vuejs:
     build: ./vuejs
@@ -42,4 +42,4 @@ services:
       - vuejs
 
 volumes:
-  crypto_batch_postgres:
+  postgres:
