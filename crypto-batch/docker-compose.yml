@@ -76,7 +76,7 @@ services:
       - ./spark/extra-jars:/opt/spark-extra-jars/  # For Spark only
 
   postgres:
-    image: postgres:13
+    image: postgres:15
     environment:
       - POSTGRES_DB=metastore
       - POSTGRES_USER=hive
