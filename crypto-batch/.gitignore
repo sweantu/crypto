@@ -1,5 +1,8 @@
 /jupyter/data/data
 /jupyter/data/.ipynb_checkpoints
 /jupyter/data/.Trash-1000
+/jupyter/data/parquet_data
+/jupyter/data/unzipped_data
 /spark/extra-jars
 /archive
+*.zip
