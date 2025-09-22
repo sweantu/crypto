@@ -30,8 +30,7 @@ services:
       - "8081:8081" # Worker UI
 
   jupyter:
-    build: ./jupyter
-    image: crypto-batch-jupyter:latest
+    image: crypto-batch-jupyter
     ports:
       - "8888:8888"
     volumes:
@@ -56,8 +55,7 @@ services:
       - minio:/data
 
   hive-metastore:
-    build: ./hive
-    image: crypto-batch-hive-metastore:latest
+    image: crypto-batch-hive-metastore
     environment:
       - SERVICE_NAME=metastore
       - DB_DRIVER=postgres

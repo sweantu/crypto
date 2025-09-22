@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+  <!-- Metastore backend (Postgres) -->
   <property>
     <name>javax.jdo.option.ConnectionURL</name>
     <value>jdbc:postgresql://postgres:5432/metastore</value>
@@ -16,10 +18,14 @@
     <name>javax.jdo.option.ConnectionPassword</name>
     <value>hive</value>
   </property>
+
+  <!-- Hive Metastore Thrift service -->
   <property>
     <name>hive.metastore.uris</name>
     <value>thrift://hive-metastore:9083</value>
   </property>
+
+  <!-- Auto-create schema if needed -->
   <property>
     <name>hive.metastore.schema.verification</name>
     <value>false</value>
@@ -28,6 +34,14 @@
     <name>datanucleus.schema.autoCreateTables</name>
     <value>true</value>
   </property>
+
+  <!-- Default warehouse root on S3 -->
+  <property>
+    <name>hive.metastore.warehouse.dir</name>
+    <value>s3a://crypto-data-lake/default_db/</value>
+  </property>
+
+  <!-- S3 / MinIO configuration -->
   <property>
     <name>fs.s3a.access.key</name>
     <value>minioadmin</value>
@@ -52,32 +66,5 @@
     <name>fs.s3a.aws.credentials.provider</name>
     <value>org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider</value>
   </property>
-  <property>
-    <name>hive.metastore.dbaccess.ssl</name>
-    <value>false</value>
-  </property>
-  <property>
-    <name>hive.metastore.authorization.storage</name>
-    <value>false</value>
-  </property>
-  <property>
-    <name>hive.metastore.warehouse.dir</name>
-    <value>s3a://warehouse/</value>
-  </property>
-  <property>
-    <name>hive.metastore.warehouse.db.suffix</name>
-    <value>false</value>
-  </property>
-  <property>
-    <name>iceberg.catalog.hive.catalog-impl</name>
-    <value>org.apache.iceberg.hive.HiveCatalog</value>
-  </property>
-  <property>
-    <name>iceberg.catalog.hive.uri</name>
-    <value>thrift://hive-metastore:9083</value>
-  </property>
-  <property>
-    <name>iceberg.catalog.hive.warehouse</name>
-    <value>s3a://warehouse/</value>
-  </property>
+
 </configuration>
