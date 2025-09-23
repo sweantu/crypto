@@ -37,6 +37,8 @@ services:
       - ./jupyter/data:/data # shared folder
       - ./spark/extra-jars:/opt/spark-extra-jars/
     working_dir: /data # <-- important!
+    environment:
+      - JUPYTER_TOKEN=123456
     depends_on:
       - spark-master
       - spark-worker
