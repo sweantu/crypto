@@ -81,6 +81,16 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
+  trino:
+    image: crypto-batch-trino
+    depends_on:
+      - hive-metastore
+      - minio
+      - postgres
+    ports:
+      - "8090:8080"
+
+
 volumes:
   minio:
   postgres:
