@@ -6,3 +6,4 @@ select * from "TABLE_PARAMS";
 ```
 Trino
 Apache Superset
+ClickHouse

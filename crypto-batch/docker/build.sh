@@ -11,3 +11,7 @@ docker build \
 docker build \
   -f trino.Dockerfile \
   -t crypto-batch-trino ..
+
+docker build \
+  -f superset.Dockerfile \
+  -t crypto-batch-superset .

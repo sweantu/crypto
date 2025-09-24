@@ -57,23 +57,41 @@ services:
     ports:
       - "8090:8080"
 
-  grafana:
-    image: grafana/grafana:11.2.0
+  superset-db:
+    image: postgres:15
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_INSTALL_PLUGINS=volkovlabs-echarts-panel
+      POSTGRES_DB: superset
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+    volumes:
+      - superset_db:/var/lib/postgresql/data
+    restart: always
+
+  superset:
+    image: crypto-batch-superset
+    environment:
+      SUPERSET_ENV: production
+      SUPERSET_LOAD_EXAMPLES: "no"
+      SUPERSET_SECRET_KEY: "123456"
+      DATABASE_URL: postgresql+psycopg2://superset:superset@superset-db:5432/superset
     depends_on:
+      - superset-db
       - trino
     ports:
-      - "3000:3000"
+      - "8088:8088"
     volumes:
-      - grafana-storage:/var/lib/grafana
+      - superset_home:/app/superset_home
     restart: always
-  
-  
+    command: >
+      sh -c "
+        superset db upgrade &&
+        superset fab create-admin --username admin --firstname Admin --lastname User --email admin@superset.com --password admin &&
+        superset init &&
+        superset run -h 0.0.0.0 -p 8088 --with-threads --reload --debugger
+      "
 
 volumes:
   minio:
   postgres:
-  grafana-storage:
+  superset_home:
+  superset_db:
