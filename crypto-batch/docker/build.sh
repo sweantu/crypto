@@ -1,6 +1,10 @@
 # -- Building the Images
 
 docker build \
+  -f spark.Dockerfile \
+  -t crypto-batch-spark .
+
+docker build \
   -f jupyter.Dockerfile \
   -t crypto-batch-jupyter .
 

@@ -24,7 +24,8 @@ RUN python3 -m pip install --no-cache-dir \
 RUN python3 -m pip install --no-cache-dir \
     pandas \
     sqlalchemy \
-    psycopg2-binary
+    psycopg2-binary \
+    pyarrow==15.0.2
 
 # Cloud / services packages
 RUN python3 -m pip install --no-cache-dir \

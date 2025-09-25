@@ -65,7 +65,6 @@ services:
       POSTGRES_PASSWORD: superset
     volumes:
       - superset_db:/var/lib/postgresql/data
-    restart: always
 
   superset:
     image: crypto-batch-superset
@@ -81,7 +80,6 @@ services:
       - "8088:8088"
     volumes:
       - superset_home:/app/superset_home
-    restart: always
     command: >
       sh -c "
         superset db upgrade &&
