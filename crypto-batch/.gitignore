@@ -3,6 +3,7 @@
 /jupyter/data/.Trash-1000
 /jupyter/data/parquet_data
 /jupyter/data/unzipped_data
+/jupyter/data/unzipped_data_month
 /spark/extra-jars
 /archive
 *.zip
