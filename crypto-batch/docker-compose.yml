@@ -1,14 +1,33 @@
 services:
-  jupyter:
-    image: crypto-batch-jupyter
-    ports:
-      - "8888:8888"
-    volumes:
-      - ./jupyter/data:/data # shared folder
-      - ./spark/extra-jars:/opt/spark-extra-jars/
-    working_dir: /data # <-- important!
+  spark-master:
+    image: crypto-batch-spark
     environment:
-      - JUPYTER_TOKEN=123456
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    volumes:
+      - ./jupyter/data:/data
+      - ./spark/extra-jars:/opt/spark-extra-jars/
+    ports:
+      - "7077:7077" # Spark master port
+      - "8080:8080" # Spark UI
+
+  spark-worker:
+    image: crypto-batch-spark
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+    depends_on:
+      - spark-master
+    volumes:
+      - ./jupyter/data:/data
+      - ./spark/extra-jars:/opt/spark-extra-jars/
+    ports:
+      - "8081:8081" # Worker UI
 
   minio:
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
@@ -36,43 +55,34 @@ services:
       - "9083:9083"
     depends_on:
       - postgres
-      - minio
     volumes:
       - ./hive/conf:/opt/hive/conf
-      - ./spark/extra-jars:/opt/spark-extra-jars/ # For Spark only
+      - ./spark/extra-jars:/opt/spark-extra-jars/  # For Spark only
 
   postgres:
-    image: postgres:15
+    image: crypto-batch-postgres
     environment:
-      - POSTGRES_DB=metastore
-      - POSTGRES_USER=hive
-      - POSTGRES_PASSWORD=hive
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
     volumes:
       - postgres:/var/lib/postgresql/data
 
-  trino:
-    image: crypto-batch-trino
+  airflow:
+    image: crypto-batch-airflow
     depends_on:
-      - hive-metastore
-    ports:
-      - "8090:8080"
-
-  grafana:
-    image: grafana/grafana:11.2.0
+      - postgres
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_INSTALL_PLUGINS=volkovlabs-echarts-panel
-    depends_on:
-      - trino
-    ports:
-      - "3000:3000"
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      - AIRFLOW__CORE__FERNET_KEY=Jers0E9_wUUeAcywlKdthfytgqpiO7QsGfk0GMiYwjw=
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
     volumes:
-      - grafana-storage:/var/lib/grafana
-  
-  
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+    ports:
+      - "8082:8080"
 
 volumes:
   minio:
   postgres:
-  grafana-storage:
