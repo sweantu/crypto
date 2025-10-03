@@ -76,12 +76,30 @@ services:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       - AIRFLOW__CORE__FERNET_KEY=Jers0E9_wUUeAcywlKdthfytgqpiO7QsGfk0GMiYwjw=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL=10
+      - AIRFLOW__CORE__DAG_SERIALIZATION=True
+      - AIRFLOW__CORE__STORE_SERIALIZED_DAGS=True
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
     ports:
       - "8082:8080"
+
+  jupyter:
+    image: crypto-batch-jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./jupyter/data:/data # shared folder
+      - ./spark/extra-jars:/opt/spark-extra-jars/
+    working_dir: /data # <-- important!
+    environment:
+      - JUPYTER_TOKEN=123456
+    depends_on:
+      - spark-master
+      - spark-worker
+      - minio
 
 volumes:
   minio:
