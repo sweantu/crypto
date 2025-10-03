@@ -42,11 +42,10 @@ services:
       - ./spark/extra-jars:/opt/spark-extra-jars/ # For Spark only
 
   postgres:
-    image: postgres:15
+    image: crypto-batch-postgres
     environment:
-      - POSTGRES_DB=metastore
-      - POSTGRES_USER=hive
-      - POSTGRES_PASSWORD=hive
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
     volumes:
       - postgres:/var/lib/postgresql/data
 
