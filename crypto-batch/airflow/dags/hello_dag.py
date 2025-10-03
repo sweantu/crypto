@@ -25,4 +25,4 @@ with DAG(
 
     task2 = BashOperator(task_id="say_hello", bash_command="echo 'Hello from Airflow!'")
 
-    task1 >> task2
+    task1 >> task2  # type: ignore

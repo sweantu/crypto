@@ -94,3 +94,15 @@ ema_df = df_sorted.mapInPandas(ema_in_chunks, schema)
 	•	Keep memory usage bounded (only chunk at a time).
 	•	Run distributed across symbols.
 ```
+
+```bash
+URL="spark://spark-master:7077"
+spark-submit \
+    --master=${URL} \
+    --jars /opt/spark-extra-jars/hadoop-aws-3.3.4.jar,/opt/spark-extra-jars/aws-java-sdk-bundle-1.12.262.jar \
+    --conf spark.hadoop.fs.s3a.access.key=minioadmin \
+    --conf spark.hadoop.fs.s3a.secret.key=minioadmin \
+    --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000 \
+    --conf spark.hadoop.fs.s3a.path.style.access=true \
+    landing_job.py
+```
