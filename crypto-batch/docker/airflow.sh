@@ -14,5 +14,5 @@ airflow users create \
   --email admin@example.com || true
 
 # Start both webserver and scheduler
-airflow webserver & 
+airflow webserver &
 airflow scheduler

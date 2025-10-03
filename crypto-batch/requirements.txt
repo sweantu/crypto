@@ -1,4 +1,6 @@
-apache-airflow==2.9.3
+apache-airflow==2.9.3 --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.9.3/constraints-3.11.txt"
+pyspark==3.5.1 --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.9.3/constraints-3.11.txt"
+apache-airflow-providers-apache-spark --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.9.3/constraints-3.11.txt"
 boto3
 trino
 minio

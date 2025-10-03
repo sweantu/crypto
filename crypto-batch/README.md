@@ -105,4 +105,5 @@ spark-submit \
     --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000 \
     --conf spark.hadoop.fs.s3a.path.style.access=true \
     landing_job.py
+pip freeze | xargs pip uninstall -y
 ```

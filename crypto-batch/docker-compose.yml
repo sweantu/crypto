@@ -96,8 +96,10 @@ services:
       - AIRFLOW__CORE__STORE_SERIALIZED_DAGS=True
     volumes:
       - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
+      # - ./airflow/logs:/opt/airflow/logs
+      # - ./airflow/plugins:/opt/airflow/plugins
+      - ./jupyter/data:/data
+      - ./spark/extra-jars:/opt/spark-extra-jars/
     ports:
       - "8082:8080"
 

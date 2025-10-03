@@ -11,6 +11,8 @@ from pyspark.sql import functions as F
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
 client = Minio(
     "minio:9000", access_key="minioadmin", secret_key="minioadmin", secure=False
 )
@@ -51,9 +53,9 @@ def extract_file(extract_dir, zip_path):
         zip_ref.extractall(extract_dir)
 
 
-extract_dir = "unzipped_data"
+extract_dir = os.path.join(script_dir, "unzipped_data")
 url = "https://data.binance.vision/data/spot/daily/aggTrades/BTCUSDT/BTCUSDT-aggTrades-2025-08-01.zip"
-file_name = url.split("/")[-1]
+file_name = os.path.join(script_dir, url.split("/")[-1])
 
 start_t = time.time()
 download_file(url, file_name)
