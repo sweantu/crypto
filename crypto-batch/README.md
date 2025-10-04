@@ -106,4 +106,22 @@ spark-submit \
     --conf spark.hadoop.fs.s3a.path.style.access=true \
     landing_job.py
 pip freeze | xargs pip uninstall -y
+
+spark-submit \
+  --master spark://spark-master:7077 \
+  --conf spark.sql.catalog.hive_catalog=org.apache.iceberg.spark.SparkCatalog \
+  --conf spark.sql.catalog.hive_catalog.catalog-impl=org.apache.iceberg.hive.HiveCatalog \
+  --conf spark.sql.catalog.hive_catalog.uri=thrift://hive-metastore:9083 \
+  --conf spark.sql.catalog.hive_catalog.warehouse=s3a://crypto-data-lake/ \
+  --conf spark.sql.defaultCatalog=hive_catalog \
+  --conf spark.hadoop.fs.s3a.access.key=minioadmin \
+  --conf spark.hadoop.fs.s3a.secret.key=minioadmin \
+  --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000 \
+  --conf spark.hadoop.fs.s3a.path.style.access=true \
+  --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
+  --conf spark.sql.sources.partitionOverwriteMode=dynamic \
+  --jars /opt/spark-extra-jars/iceberg-spark-runtime-3.5_2.12-1.6.1.jar,\
+/opt/spark-extra-jars/hadoop-aws-3.3.4.jar,\
+/opt/spark-extra-jars/aws-java-sdk-bundle-1.12.262.jar \
+  transform_job.py
 ```
