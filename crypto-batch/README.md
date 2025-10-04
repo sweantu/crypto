@@ -124,4 +124,9 @@ spark-submit \
 /opt/spark-extra-jars/hadoop-aws-3.3.4.jar,\
 /opt/spark-extra-jars/aws-java-sdk-bundle-1.12.262.jar \
   transform_job.py
+
+airflow dags backfill end_etl_spark \
+  -s 2025-10-01 -e 2025-10-03 \
+  -c '{"symbol": "ETHUSDT"}'
 ```
+
