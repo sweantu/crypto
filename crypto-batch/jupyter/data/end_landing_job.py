@@ -9,11 +9,14 @@ from minio import Minio
 from pyspark.sql import SparkSession, types
 from pyspark.sql import functions as F
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # -------------------
 # CLI args from Airflow SparkSubmitOperator
 # -------------------
 if len(sys.argv) < 3:
-    print("Usage: spark-submit end_landing_job.py <landing_date> <symbol>")
+    logger.error("Usage: spark-submit end_landing_job.py <landing_date> <symbol>")
     sys.exit(1)
 
 landing_date = sys.argv[1]  # comes from {{ ds }}
@@ -28,10 +31,6 @@ client = Minio(
 bucket = "crypto-data-lake"
 if not client.bucket_exists(bucket):
     client.make_bucket(bucket)
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 
 # -------------------
 # Helper functions

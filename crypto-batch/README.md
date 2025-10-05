@@ -127,6 +127,6 @@ spark-submit \
 
 airflow dags backfill end_etl_spark \
   -s 2025-10-01 -e 2025-10-03 \
-  -c '{"symbol": "ETHUSDT"}'
+  -c '{"symbol": "BTCUSDT"}'
 ```
 
