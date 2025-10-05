@@ -83,5 +83,47 @@ with DAG(
         ],
     )
 
+    end_transform_job_pattern_two = SparkSubmitOperator(
+        task_id="end_transform_job_pattern_two",
+        application="/data/end_transform_job_pattern_two.py",  # script path inside Airflow container
+        conn_id="spark_default",  # Spark connection in Airflow
+        name="TransformJobPatternTwo",
+        verbose=True,
+        conf={
+            # ---- Iceberg + Hive Catalog ----
+            "spark.sql.catalog.hive_catalog": "org.apache.iceberg.spark.SparkCatalog",
+            "spark.sql.catalog.hive_catalog.catalog-impl": "org.apache.iceberg.hive.HiveCatalog",
+            "spark.sql.catalog.hive_catalog.uri": "thrift://hive-metastore:9083",
+            "spark.sql.catalog.hive_catalog.warehouse": "s3a://crypto-data-lake/",
+            # ---- Default catalog ----
+            "spark.sql.defaultCatalog": "hive_catalog",
+            # ---- S3 (MinIO) ----
+            "spark.hadoop.fs.s3a.access.key": "minioadmin",
+            "spark.hadoop.fs.s3a.secret.key": "minioadmin",
+            "spark.hadoop.fs.s3a.endpoint": "http://minio:9000",
+            "spark.hadoop.fs.s3a.path.style.access": "true",
+            # ---- Iceberg Extensions ----
+            "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
+            "spark.sql.sources.partitionOverwriteMode": "dynamic",
+        },
+        jars=",".join(
+            [
+                "/opt/spark-extra-jars/iceberg-spark-runtime-3.5_2.12-1.6.1.jar",
+                "/opt/spark-extra-jars/hadoop-aws-3.3.4.jar",
+                "/opt/spark-extra-jars/aws-java-sdk-bundle-1.12.262.jar",
+            ]
+        ),
+        application_args=[
+            "{{ ds }}",  # execution date
+            "{{ params.symbol }}",  # symbol from UI
+        ],
+    )
+
     end = EmptyOperator(task_id="end")
-    start >> end_landing_job >> end_transform_job >> end  # type: ignore
+    (
+        start
+        >> end_landing_job
+        >> end_transform_job
+        >> end_transform_job_pattern_two
+        >> end
+    )  # type: ignore
