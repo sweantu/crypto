@@ -17,11 +17,12 @@ with DAG(
     default_args=default_args,
     description="END ETL DAG running Spark job",
     schedule_interval="0 0 * * *",
-    start_date=datetime(2025, 10, 1),
+    start_date=datetime(2025, 9, 27),
+    end_date=datetime(2025, 9, 27),
     catchup=True,  # enable backfill
     max_active_runs=1,
     params={
-        "symbol": "BTCUSDT",
+        "symbol": "ADAUSDT",
     },
     tags=["spark", "etl"],
 ) as dag:

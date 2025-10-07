@@ -71,9 +71,9 @@ def make_ema_in_chunks(prev_ema7, prev_ema20):
             for p in pdf["close_price"]:
                 price = float(p)
                 e7 = calc_ema(price, ema_configs["ema7"])
-                ema7.append(round_half_up(e7, 2) if e7 is not None else None)
+                ema7.append(round_half_up(e7, 4) if e7 is not None else None)
                 e20 = calc_ema(price, ema_configs["ema20"])
-                ema20.append(round_half_up(e20, 2) if e20 is not None else None)
+                ema20.append(round_half_up(e20, 4) if e20 is not None else None)
 
             pdf["ema7"] = ema7
             pdf["ema20"] = ema20
