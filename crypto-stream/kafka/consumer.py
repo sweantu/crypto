@@ -1,19 +1,29 @@
-from confluent_kafka import Consumer
+import json
+
+from confluent_kafka import Consumer, KafkaException
 
 conf = {
-    "bootstrap.servers": "localhost:9092",
-    "group.id": "my-group",
+    "bootstrap.servers": "localhost:29092",
+    "group.id": "test-group",
     "auto.offset.reset": "earliest",
 }
 
 consumer = Consumer(conf)
-consumer.subscribe(["my_topic"])
+topic = "aggtrade-topic"
+consumer.subscribe([topic])
 
-while True:
-    msg = consumer.poll(1.0)
-    if msg is None:
-        continue
-    if msg.error():
-        print(f"❌ {msg.error()}")
-        continue
-    print(f"✅ Received: {msg.value().decode('utf-8')} (key={msg.key()})")
+print("👂 Listening for messages...")
+
+try:
+    while True:
+        msg = consumer.poll(1.0)
+        if msg is None:
+            continue
+        if msg.error():
+            raise KafkaException(msg.error())
+        data = json.loads(msg.value().decode("utf-8"))
+        print(f"📩 Received: {data}")
+except KeyboardInterrupt:
+    pass
+finally:
+    consumer.close()
