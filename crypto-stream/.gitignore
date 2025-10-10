@@ -1,1 +1,3 @@
 *.csv
+jupyter/workspace/output
+jupyter/workspace/.ipynb_checkpoints

@@ -5,6 +5,6 @@ docker build \
   -t crypto-stream-flink .
 
 docker build \
-  -f zeppelin.Dockerfile \
-  -t crypto-stream-zeppelin .
+  -f jupyter.Dockerfile \
+  -t crypto-stream-jupyter .
 
