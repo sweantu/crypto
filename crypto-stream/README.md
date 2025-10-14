@@ -22,4 +22,4 @@ t_env.execute_sql("""
 t_env.execute_sql("INSERT INTO numbers VALUES (1), (2), (3)")
 ```
 
-flink run -py test_job.py -m jobmanager:8081
+flink run -m jobmanager:8081 -py /workspace/test_transform_job_pattern_two.py

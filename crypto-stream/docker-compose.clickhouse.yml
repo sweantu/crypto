@@ -1,0 +1,16 @@
+services:
+  clickhouse:
+    image: clickhouse:25.8.10.7
+    restart: unless-stopped
+    ports:
+      - "8123:8123" # HTTP interface (for curl or browser)
+      - "9000:9000" # Native TCP interface (for clients/drivers)
+    environment:
+      CLICKHOUSE_DB: testdb
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: 123456
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+
+volumes:
+  clickhouse-data:

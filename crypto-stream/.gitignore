@@ -1,3 +1,4 @@
 *.csv
 jupyter/workspace/output
 jupyter/workspace/.ipynb_checkpoints
+jupyter/workspace/.Trash-0
