@@ -87,9 +87,3 @@ services:
       CLICKHOUSE_DB: testdb
       CLICKHOUSE_USER: default
       CLICKHOUSE_PASSWORD: 123456
-    volumes:
-      - ./clickhouse/clickhouse-init.sql:/docker-entrypoint-initdb.d/clickhouse-init.sql:ro
-      - clickhouse_data:/var/lib/clickhouse
-
-volumes:
-  clickhouse_data:
