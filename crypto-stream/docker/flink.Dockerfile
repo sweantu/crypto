@@ -34,4 +34,18 @@ RUN pip install --no-cache-dir \
     pandas \
     numpy
 
+WORKDIR $FLINK_HOME/lib
+
+# Kafka SQL connector (compatible with Flink 1.20)
+RUN wget https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-kafka/3.3.0-1.20/flink-sql-connector-kafka-3.3.0-1.20.jar
+
+# JDBC connector (shaded) for Flink 1.20
+RUN wget https://repo1.maven.org/maven2/org/apache/flink/flink-connector-jdbc/3.3.0-1.20/flink-connector-jdbc-3.3.0-1.20.jar
+
+# PostgreSQL JDBC driver
+RUN wget https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.3/postgresql-42.7.3.jar
+
+# ClickHouse driver
+RUN wget https://repo1.maven.org/maven2/name/nkonev/flink/flink-sql-connector-clickhouse/1.17.1-8/flink-sql-connector-clickhouse-1.17.1-8.jar
+
 WORKDIR /opt/flink

@@ -39,3 +39,57 @@ services:
       - JUPYTER_TOKEN=123456
     depends_on:
       - jobmanager
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.8.4
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.8.4
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_LOG_RETENTION_HOURS: 24
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+  
+  clickhouse:
+    image: clickhouse:25.8.10.7
+    restart: unless-stopped
+    ports:
+      - "8123:8123" # HTTP interface (for curl or browser)
+      - "9000:9000" # Native TCP interface (for clients/drivers)
+    environment:
+      CLICKHOUSE_DB: testdb
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: 123456
+    volumes:
+      - ./clickhouse/clickhouse-init.sql:/docker-entrypoint-initdb.d/clickhouse-init.sql:ro
+      - clickhouse_data:/var/lib/clickhouse
+
+volumes:
+  clickhouse_data:

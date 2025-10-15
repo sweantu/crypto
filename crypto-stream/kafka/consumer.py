@@ -9,7 +9,7 @@ conf = {
 }
 
 consumer = Consumer(conf)
-topic = "aggtrade-topic"
+topic = "engulfings-topic"
 consumer.subscribe([topic])
 
 print("👂 Listening for messages...")

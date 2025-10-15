@@ -5,7 +5,7 @@ from confluent_kafka import Producer
 
 conf = {"bootstrap.servers": "localhost:29092"}
 producer = Producer(conf)
-topic = "aggtrade-topic"
+topic = "aggtrades-topic"
 
 
 def delivery_report(err, msg):
@@ -24,12 +24,16 @@ class AggTrade:
         self.quantity = float(row[2])
         self.first_trade_id = int(row[3])
         self.last_trade_id = int(row[4])
-        self.timestamp = int(row[5])
+        self.ts_int = int(row[5])
         self.is_buyer_maker = row[6].strip().lower() == "true"
         self.is_best_match = row[7].strip().lower() == "true"
 
 
-with open("ADAUSDT-aggTrades-2025-09-27.csv", newline="", encoding="utf-8") as f:
+with open(
+    "../jupyter/workspace/ADAUSDT-aggTrades-2025-09-27.csv",
+    newline="",
+    encoding="utf-8",
+) as f:
     reader = csv.reader(f)
     for i, row in enumerate(reader, 1):
         try:
