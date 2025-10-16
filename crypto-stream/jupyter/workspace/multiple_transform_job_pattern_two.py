@@ -66,8 +66,8 @@ GROUP BY window_start, window_end, symbol
 t_env.execute_sql("DROP TABLE IF EXISTS klines")
 t_env.execute_sql("""
 CREATE TABLE klines (
-    window_start TIMESTAMP(3),
-    window_end TIMESTAMP(3),
+    window_start TIMESTAMP_LTZ(3),
+    window_end TIMESTAMP_LTZ(3),
     symbol STRING,
     landing_date DATE,
     open_price DOUBLE,
@@ -85,7 +85,6 @@ CREATE TABLE klines (
     'sink.batch-size' = '5000',
     'sink.flush-interval' = '2s',
     'sink.max-retries' = '3',
-    'sink.parallelism' = '4',
     'sink.ignore-delete' = 'true'
 )
 """)
@@ -93,8 +92,8 @@ CREATE TABLE klines (
 t_env.execute_sql("DROP TABLE IF EXISTS engulfing_clickhouse")
 t_env.execute_sql("""
 CREATE TABLE engulfing_clickhouse (
-    window_start TIMESTAMP(3),
-    window_end TIMESTAMP(3),
+    window_start TIMESTAMP_LTZ(3),
+    window_end TIMESTAMP_LTZ(3),
     symbol STRING,
     landing_date DATE,
     open_price DOUBLE,
@@ -116,7 +115,6 @@ CREATE TABLE engulfing_clickhouse (
     'sink.batch-size' = '5000',
     'sink.flush-interval' = '2s',
     'sink.max-retries' = '3',
-    'sink.parallelism' = '4',
     'sink.ignore-delete' = 'true'
 )
 """)
@@ -125,8 +123,8 @@ CREATE TABLE engulfing_clickhouse (
 t_env.execute_sql("DROP TABLE IF EXISTS engulfing_kafka")
 t_env.execute_sql("""
 CREATE TABLE engulfing_kafka (
-    window_start TIMESTAMP(3),
-    window_end TIMESTAMP(3),
+    window_start TIMESTAMP_LTZ(3),
+    window_end TIMESTAMP_LTZ(3),
     symbol STRING,
     landing_date DATE,
     open_price DOUBLE,
@@ -291,5 +289,7 @@ statement_set.add_insert_sql("INSERT INTO klines SELECT * FROM klines_view")
 statement_set.add_insert_sql(
     "INSERT INTO engulfing_clickhouse SELECT * FROM engulfing_view"
 )
-statement_set.add_insert_sql("INSERT INTO engulfing_kafka SELECT * FROM engulfing_view")
+statement_set.add_insert_sql(
+    "INSERT INTO engulfing_kafka SELECT * FROM engulfing_view where engulfing_pattern IS NOT NULL"
+)
 statement_set.execute().wait()

@@ -30,7 +30,7 @@ class AggTrade:
         self.symbol = symbol
 
 def produce_messages(topic: str, symbol: str, file_path: str, conf: dict) -> None:
-    symbol_to_partition = {"ADAUSDT": 0, "BTCUSDT": 1, "ETHUSDT": 2}
+    symbol_to_partition = {"ADAUSDT": 0, "BTCUSDT": 1, "ETHUSDT": 2, "BNBUSDT": 3}
     producer = Producer(conf)
     num_lines = int(subprocess.check_output(["wc", "-l", file_path]).split()[0])
     duration_in_seconds = 90
@@ -69,11 +69,11 @@ def produce_messages(topic: str, symbol: str, file_path: str, conf: dict) -> Non
 if __name__ == "__main__":
     conf = {"bootstrap.servers": "localhost:29092"}
     topic = "aggtrades-topic"
-    # symbols = ["ADAUSDT", "BTCUSDT", "ETHUSDT"]
-    symbols = ["ADAUSDT"]
+    symbols = ["ADAUSDT", "BTCUSDT", "ETHUSDT", "BNBUSDT"]
+    # symbols = ["ADAUSDT"]
     t_start_all = time.time()
     with ThreadPoolExecutor() as executor:
-        for i in range(1):
+        for i in range(3):
             t_start_round = time.time()
             file_paths = [
                 f"../jupyter/workspace/input/{symbol}-aggTrades-2025-09-{26 + i}.csv"

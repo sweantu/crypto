@@ -18,4 +18,7 @@ for f in $(ls "$SQL_DIR"/*.sql | sort); do
     docker compose exec -T $CONTAINER_NAME sh -c "clickhouse-client --user $USER --password $PASSWORD --database $DATABASE" < "$f"
 done
 
+docker compose exec kafka kafka-topics --bootstrap-server localhost:9092 --create --topic aggtrades-topic --partitions 4 --replication-factor 1
+docker compose exec kafka kafka-topics --bootstrap-server localhost:9092 --create --topic engulfings-topic --partitions 4 --replication-factor 1
+
 echo "All scripts executed!"

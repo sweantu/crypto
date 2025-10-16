@@ -87,3 +87,17 @@ services:
       CLICKHOUSE_DB: testdb
       CLICKHOUSE_USER: default
       CLICKHOUSE_PASSWORD: 123456
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=volkovlabs-echarts-panel
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+volumes:
+  grafana-storage:
