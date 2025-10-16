@@ -53,9 +53,9 @@ def produce_messages(topic: str, symbol: str, file_path: str, conf: dict) -> Non
                 )
                 if i % int(num_lines / duration_in_seconds) == 0:
                     producer.poll(0)
-                    # print(
-                    #     f"Produced {i} messages for {symbol} partition {symbol_to_partition[symbol]} so far..."
-                    # )
+                    print(
+                        f"Produced {i} messages for {symbol} partition {symbol_to_partition[symbol]} so far..."
+                    )
                     time.sleep(1)
             except Exception as e:
                 print(f"❌ Exception while producing message: {i}, error: {e}")
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     symbols = ["ADAUSDT"]
     t_start_all = time.time()
     with ThreadPoolExecutor() as executor:
-        for i in range(3):
+        for i in range(1):
             t_start_round = time.time()
             file_paths = [
                 f"../jupyter/workspace/input/{symbol}-aggTrades-2025-09-{26 + i}.csv"

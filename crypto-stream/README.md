@@ -1,4 +1,4 @@
-flink run -m jobmanager:8081 -py /workspace/test_transform_job_pattern_two.py
+flink run -m jobmanager:8081 -py /workspace/
 
 can find a community ClickHouse connector that is compatible with Flink 1.20 (pre-compiled jar), and give you a direct download link. Do you want me to do that now?
 https://mvnrepository.com/artifact/name.nkonev.flink/flink-sql-connector-clickhouse
