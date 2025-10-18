@@ -38,6 +38,7 @@ async def health_check():
 async def get_db():
     async with SessionLocal() as session:
         yield session
+        # get a connection from the pool, automatically open a transaction when running a first query, if you don't commit manually, it will automatically rollback. One connection can have multiple transactions during its lifetime.
 
 
 DbDep = Annotated[AsyncSession, Depends(get_db)]

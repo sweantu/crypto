@@ -78,8 +78,13 @@ class UserService:
         await self.user_repository.reactivate(user_id)
         await self.db.commit()
 
+
 def get_user_service(db: DbDep) -> UserService:
     return UserService(db=db)
+    # Each service should have its own domain logic, so they should use one session connection per service, might use only one transaction if any
+    # Read queries do not need to commit, but write queries do
+    # One endpoint might use multiple services. if they share the same domain logic, they should share the same session connection and transaction commit,
+    # but if they have different domain logic, for example, auth service for registering user, and user service for getting user profile in one endpoint, they should use different session connections for simplicity.
 
 
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
