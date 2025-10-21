@@ -1,103 +1,54 @@
 services:
-  jobmanager:
-    image: crypto-stream-flink
-    hostname: jobmanager
-    ports:
-      - "8081:8081"
-    command: jobmanager
+  fastapi:
+    build: ./fastapi
+    env_file: ./fastapi/.env
     volumes:
-      - ./jupyter/workspace:/workspace
-    environment:
-      FLINK_PROPERTIES: |
-        jobmanager.rpc.address: jobmanager
-        jobmanager.memory.process.size: 1g
-        rest.port: 8081
-        state.checkpoints.dir: file:///opt/flink/checkpoints
-        state.savepoints.dir: file:///opt/flink/savepoints
-
-  taskmanager:
-    image: crypto-stream-flink
+      - ./fastapi:/app
+      - ./uploads:/uploads
+      - ./logs:/logs
+    ports:
+      - "8000:5888"
     depends_on:
-      - jobmanager
-    command: taskmanager
+      - postgres
+
+  postgres:
+    image: postgres:15
+    env_file: ./fastapi/.env
+    ports:
+      - "5433:5432"
     volumes:
-      - ./jupyter/workspace:/workspace
-    environment:
-      FLINK_PROPERTIES: |
-        jobmanager.rpc.address: jobmanager
-        taskmanager.numberOfTaskSlots: 4
-        taskmanager.memory.process.size: 2g
-        parallelism.default: 1
+      - postgres-data:/var/lib/postgresql/data
 
-  jupyter:
-    image: crypto-stream-jupyter
-    ports:
-      - "8888:8888"
+  vuejs:
+    build: ./vuejs
     volumes:
-      - ./jupyter/workspace:/workspace
-    environment:
-      - JUPYTER_TOKEN=123456
+      - ./vuejs:/app # sync code changes
+      - /app/node_modules # prevent overwriting node_modules
+    ports:
+      - "5173:5173"
     depends_on:
-      - jobmanager
+      - fastapi
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.8.4
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+  nginx:
+    image: nginx:1.26-alpine
     ports:
-      - "2181:2181"
-
-  kafka:
-    image: confluentinc/cp-kafka:7.8.4
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+      - ./uploads:/uploads
     depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-      - "29092:29092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:29092
-      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_LOG_RETENTION_HOURS: 24
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    ports:
-      - "8090:8080"
-    environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      - vuejs
   
-  clickhouse:
-    image: clickhouse:25.8.10.7
-    restart: unless-stopped
-    ports:
-      - "8123:8123" # HTTP interface (for curl or browser)
-      - "9000:9000" # Native TCP interface (for clients/drivers)
-    environment:
-      CLICKHOUSE_DB: testdb
-      CLICKHOUSE_USER: default
-      CLICKHOUSE_PASSWORD: 123456
-
-  grafana:
-    image: grafana/grafana:11.2.0
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_INSTALL_PLUGINS=volkovlabs-echarts-panel
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana-storage:/var/lib/grafana
+  # zeppelin:
+  #   image: crypto-stream-zeppelin
+  #   container_name: zeppelin
+  #   depends_on:
+  #     - jobmanager
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     ZEPPELIN_ADDR: 0.0.0.0
+  #     ZEPPELIN_PORT: 8080
 
 volumes:
-  grafana-storage:
+  postgres-data:

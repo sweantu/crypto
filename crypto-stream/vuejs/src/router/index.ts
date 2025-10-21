@@ -11,7 +11,7 @@ import UserPage from '@/views/UserPage.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_BASE_URL),
+  history: createWebHistory(),
   routes: [
     { path: '/', component: HomePage },
     { path: '/about', component: AboutPage },
