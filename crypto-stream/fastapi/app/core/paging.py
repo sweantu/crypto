@@ -13,6 +13,7 @@ class PagingResponse(BaseModel, Generic[T]):
     page: int
     page_size: int
     items: Sequence[T]
+    cached: bool = False
 
 
 class Paging(BaseModel, Generic[T]):
