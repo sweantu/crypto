@@ -3,7 +3,7 @@ from typing import Annotated, NamedTuple
 from uuid import uuid4
 
 import boto3
-from botocore.exceptions import TokenRetrievalError
+from botocore.exceptions import NoCredentialsError
 from fastapi import Depends, File, HTTPException, UploadFile
 
 
@@ -22,8 +22,10 @@ def upload_file(content: bytes, filename: str) -> str:
         s3.upload_fileobj(file_obj, bucket_name, key)
         url = f"https://{bucket_name}.s3.ap-southeast-1.amazonaws.com/{key}"
         return url
-    except TokenRetrievalError as e:
-        raise HTTPException(status_code=500, detail="File upload failed") from e
+    except NoCredentialsError as e:
+        raise HTTPException(status_code=500, detail="No AWS credentials found") from e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"File upload failed: {e}") from e
 
 
 def get_images_upload(
