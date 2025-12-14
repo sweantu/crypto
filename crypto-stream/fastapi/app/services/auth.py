@@ -37,13 +37,13 @@ class AuthService:
                 status_code=400,
                 detail="Email already registered",
             )
-        await self.user_repository.create(
-            name=register.name,
-            email=register.email,
-            password=register.password,
-            role=Role.USER,
-        )
-        await self.db.commit()
+        async with self.db.begin():
+            await self.user_repository.create(
+                name=register.name,
+                email=register.email,
+                password=register.password,
+                role=Role.USER,
+            )
 
 
 def get_auth_service(db: DbDep) -> AuthService:
